@@ -38,6 +38,10 @@ class TeacherService {
         ];
         $user->teacherInfomation()->create($teacherData);
 
+
+        $teacher
+
+
         $user->load('teacherInfomation');
 
         return response()

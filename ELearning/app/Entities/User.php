@@ -61,7 +61,15 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function teacherInfomation(){
+    public function teacherInfomation()
+    {
         return $this->hasOne(TeacherInfomation::class, 'user_id');
     }
+
+    public function teacherCertificates(){
+        return $this->belongsToMany(Certificate::class, 'teacher_certificate', 'user_id', 'certificate_id')
+            ->withPivot(['date of issue', 'image']);
+    }
+
+    
 }

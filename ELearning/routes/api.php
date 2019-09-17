@@ -30,6 +30,16 @@ Route::group([
     Route::post('/info', 'AuthController@info');
 });
 
+
+/** Admin */
+Route::group([
+    'prefix' => 'admin',
+    'middleware' => 'admin.auth'
+], function ($router) {
+    Route::post('user/{userId}/activate', 'AdminController@activateUser');
+    Route::post('user/{userId}/deactivate', 'AdminController@deactivateUser');
+});
+
 /** Teacher */
 Route::group([
     'prefix' => 'teacher'
