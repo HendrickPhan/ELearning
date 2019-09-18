@@ -9,7 +9,7 @@ use App\Helpers\Statics\UserRolesStatic;
 use App\Helpers\Statics\UserStatusStatic;
 use App\Helpers\Traits\UploadImageTrait;
 
-class TeacherService {
+class StudentService {
     use UploadImageTrait;
 
     public function register($request)
@@ -23,7 +23,7 @@ class TeacherService {
             'email' => $data['email'], 
             'password' => Hash::make($data['password']), 
             'date_of_birth' => $data['date_of_birth'],
-            'role' => UserRolesStatic::TEACHER,
+            'role' => UserRolesStatic::STUDENT,
             'description' => $data['description'],
             'avatar' => $filePath,
             'status' => UserStatusStatic::INACTIVE
@@ -31,15 +31,14 @@ class TeacherService {
         
         $user = User::create($userData);
 
-        $teacherData = [
+        $studentData = [
             'phone_number' => $data['phone_number'],
             'address' => $data['address'],
-            'experience' => isset($data['experience']) ? $data['experience'] : null,
         ];
-        $user->teacherInfomation()->create($teacherData);
+        $user->studentInfomation()->create($studentData);
 
 
-        $user->load('teacherInfomation');
+        $user->load('studentInformation');
 
         return response()
             ->json($user); 
@@ -48,7 +47,7 @@ class TeacherService {
     public function info()
     {
         $user = \Auth::user();
-        $user->load('teacherInfomation');
+        $user->load('studentInformation');
 
         return response()
             ->json($user);
