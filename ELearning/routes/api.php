@@ -34,7 +34,7 @@ Route::group([
 /** Admin */
 Route::group([
     'prefix' => 'admin',
-    'middleware' => 'admin.auth'
+    'middleware' => 'auth.role:0'//admin
 ], function ($router) {
     Route::post('user/{userId}/activate', 'AdminController@activateUser');
     Route::post('user/{userId}/deactivate', 'AdminController@deactivateUser');
@@ -50,7 +50,7 @@ Route::group([
 
 Route::group([
     'prefix' => 'teacher',
-    'middleware' => 'teacher.auth'
+    'middleware' => 'auth.role:1' //teacher
 ], function ($router) {
     Route::get('/info', 'TeacherController@info');
 });

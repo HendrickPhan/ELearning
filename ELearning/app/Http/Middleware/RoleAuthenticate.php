@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Support\Facades\Response;
 use App\Helpers\Statics\UserRolesStatic;
 
-class AdminAuthenticate
+class RoleAuthenticate
 {
     /**
      * Handle an incoming request.
@@ -15,10 +15,10 @@ class AdminAuthenticate
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, ... $roles)
     {
         $user = \Auth::user();
-        if (!$user || $user->role != UserRolesStatic::ADMIN) {
+        if (!$user || in_array($user->role, $roles)) {
             return response()->json(
                 trans('message.forbidden') ,
                 403

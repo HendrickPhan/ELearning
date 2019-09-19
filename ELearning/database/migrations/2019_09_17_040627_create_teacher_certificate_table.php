@@ -18,7 +18,7 @@ class CreateTeacherCertificateTable extends Migration
             $table->unsignedInteger('user_id')->index();
             $table->unsignedInteger('certificate_id')->index();
             $table->timestamp('date of issue');
-            $table->string('image', 127);
+            $table->string('image', 127)->nullable();
             $table->timestamps();
         });
     }

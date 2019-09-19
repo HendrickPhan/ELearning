@@ -34,6 +34,7 @@ class RegisterTeacherRequest extends FormRequest
             'phone_number' => 'required',
             'address' => 'required',
             'certificates' => 'array',
+            'certificates.*.id' =>'exists:certificates,id',
             'grade_subjects' => 'array',
             'experience' => 'string'
         ];

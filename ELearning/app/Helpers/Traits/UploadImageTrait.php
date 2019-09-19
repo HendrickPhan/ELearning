@@ -8,10 +8,19 @@ trait UploadImageTrait
 
     public function uploadAvatar($avatar)
     {
-        $name = $avatar->getClientOriginalName() . time();
+        $name = time().$avatar->getClientOriginalName();
         $folder = '/uploads/images/avatars/';
-        $filePath = $folder . $name. '.' . $avatar->getClientOriginalExtension();
+        $filePath = $folder . $name;
         $this->uploadOne($avatar, $folder, 'public', $name);
+        return $filePath;
+    }
+
+    public function uploadCertificate($image)
+    {
+        $name = time().$image->getClientOriginalName();
+        $folder = '/uploads/images/certificates/';
+        $filePath = $folder . $name;
+        $this->uploadOne($image, $folder, 'public', $name);
         return $filePath;
     }
 
