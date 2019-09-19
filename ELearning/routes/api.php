@@ -54,3 +54,18 @@ Route::group([
 ], function ($router) {
     Route::get('/info', 'TeacherController@info');
 });
+
+/** Student */
+Route::group([
+    'prefix' => 'student'
+],  function ($router) {
+    Route::post('/register', 'StudentController@register');
+    Route::post('/info', 'StudentController@info');
+});
+
+Route::group([
+    'prefix' => 'student',
+    'middleware' => 'student.auth'
+], function ($router) {
+    Route::get('/info', 'StudentController@info');
+});
