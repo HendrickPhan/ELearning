@@ -18,6 +18,7 @@ class TeacherService {
         $avatar = $request->file('avatar');
         $filePath = $this->uploadAvatar($avatar);
 
+        //basic user info
         $userData = [
             'name' => $data['name'], 
             'email' => $data['email'], 
@@ -28,9 +29,9 @@ class TeacherService {
             'avatar' => $filePath,
             'status' => UserStatusStatic::INACTIVE
         ];
-        
         $user = User::create($userData);
 
+        //teacher info
         $teacherData = [
             'phone_number' => $data['phone_number'],
             'address' => $data['address'],
@@ -38,8 +39,20 @@ class TeacherService {
         ];
         $user->teacherInfomation()->create($teacherData);
 
+        //certificate info
+        $certificates = isset($data['certificates']) ? $data['certificates'] : [];
+        foreach($certificates as $certificate){
+            $image = $request->file('certificate-' . $certificate['id']);
+            $filePath = $image ? $this->uploadCertificate($image) : null;
 
-        $user->load('teacherInfomation');
+            $user->teacherCertificates()->attach($certificate['id'], [
+                'image' =>  $filePath
+            ]);
+        }
+
+        //grade-subject info
+
+        $user->load(['teacherInfomation','teacherCertificates']);
 
         return response()
             ->json($user); 
