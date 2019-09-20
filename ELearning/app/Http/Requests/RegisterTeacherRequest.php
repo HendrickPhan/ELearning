@@ -35,6 +35,7 @@ class RegisterTeacherRequest extends FormRequest
             'address' => 'required',
             'certificates' => 'array',
             'certificates.*.id' =>'exists:certificates,id',
+            'certificates.*.date_of_issue' =>'date',
             'grade_subjects' => 'array',
             'experience' => 'string'
         ];
