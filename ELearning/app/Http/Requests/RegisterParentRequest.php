@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterStudentRequest extends FormRequest
+class RegisterParentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,6 +31,9 @@ class RegisterStudentRequest extends FormRequest
             'avatar' => 'required|image',
             'description' => 'required',
             'date_of_birth' => 'required|date',
+            'phone_number' => 'required',
+            'students' => 'array',
+            'students.*.id' =>'exists:students,id',
         ];
     }
 }

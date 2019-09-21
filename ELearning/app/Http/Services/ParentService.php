@@ -7,9 +7,10 @@ use App\Entities\User;
 use Illuminate\Support\Facades\Hash;
 use App\Helpers\Statics\UserRolesStatic;
 use App\Helpers\Statics\UserStatusStatic;
+use App\Helpers\Statics\ConnectParentStatusStatic;
 use App\Helpers\Traits\UploadImageTrait;
 
-class StudentService {
+class ParentService {
     use UploadImageTrait;
 
     public function register($request)
@@ -18,28 +19,37 @@ class StudentService {
         $avatar = $request->file('avatar');
         $filePath = $this->uploadAvatar($avatar);
 
+        //basic user info
         $userData = [
             'name' => $data['name'], 
             'email' => $data['email'], 
             'password' => Hash::make($data['password']), 
             'date_of_birth' => $data['date_of_birth'],
-            'role' => UserRolesStatic::STUDENT,
+            'role' => UserRolesStatic::PARENT,
             'description' => $data['description'],
             'avatar' => $filePath,
             'status' => UserStatusStatic::ACTIVE
         ];
-        
         $user = User::create($userData);
 
-        $studentData = [
+        //parent info
+        $parentData = [
             'phone_number' => $data['phone_number'],
-            'school' => $data['school'],
-            'class' => $data['class'],
         ];
-        $user->studentInfomation()->create($studentData);
+        $user->parentInfomation()->create($parentData);
+
+        //student info
+        $students = isset($data['students_ids']) ? $data['students_ids'] : [];
+        foreach($students_ids as $students_id){
+            //
+            $user->studentParents()->attach($student['id'], [
+                'connect_status' =>  ConnectParentStatusStatic::PENDING,
+            ]);
 
 
-        $user->load('studentInfomation');
+        }      
+
+        $user->load(['parentInfomation','studentParents']);
 
         return response()
             ->json($user); 
@@ -48,7 +58,7 @@ class StudentService {
     public function info()
     {
         $user = \Auth::user();
-        $user->load('studentInfomation');
+        $user->load('parentInfomation');
 
         return response()
             ->json($user);

@@ -71,10 +71,13 @@ class User extends Authenticatable implements JWTSubject
             ->withPivot(['date of issue', 'image']);
     }
 
-    public function studentInformation()
+    public function studentInfomation()
     {
         return $this->hasOne(StudentInformation::class, 'user_id');
     }
 
-    
+    public function studentParents(){
+        return $this->belongsToMany(Parent::class, 'student_parent', 'user_id', 'parent_id')
+            ->withPivot(['connect_status']);
+    }
 }

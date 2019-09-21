@@ -23,5 +23,5 @@ class StudentController extends Controller
     {
         return $this->service->info();
     }
-
+    
 }
