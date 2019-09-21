@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use App\Helpers\Statics\GeneralStatusStatic;
 use App\Entities\Grade;
 
@@ -13,16 +14,16 @@ class GradeService {
         $limit = $request->get('limit', 10);
         $status = $request->get('status', null);
 
-        $gradesQuery = Grade::where([]);
+        $gradesQuery = Grade::query();
 
         if ($status) {
             $gradesQuery = $gradesQuery->where('status', $status);
         }
 
-        $gradesQuery->paginate($limit);
+        $gradesResult = $gradesQuery->paginate($limit);
 
         return response()
-            ->json($gradesQuery); 
+            ->json($gradesResult); 
     }
 
     public function detail($id)
@@ -33,7 +34,7 @@ class GradeService {
             ->json($grade);
     }
 
-    public function add($request)
+    public function create($request)
     {
         $data = $request->all();
         $data['status'] = GeneralStatusStatic::UNPUBLISHED;

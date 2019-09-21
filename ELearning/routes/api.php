@@ -39,6 +39,24 @@ Route::group([
     Route::post('user/{userId}/activate', 'AdminController@activateUser');
     Route::post('user/{userId}/deactivate', 'AdminController@deactivateUser');
 });
+    /** Admin-grade */
+Route::group([
+    'prefix' => 'admin/grade',
+    'middleware' => 'auth.role:0'//admin
+], function ($router) {
+    Route::put('/{id}', 'GradeController@update');
+    Route::put('/{id}/status', 'GradeController@updateStatus');
+    Route::delete('/{id}', 'GradeController@delete');
+});
+    /** Admin-subject */
+Route::group([
+    'prefix' => 'admin/subject',
+], function ($router) {
+    Route::put('/{id}', 'SubjectController@update');
+    Route::put('/{id}/status', 'SubjectController@updateStatus');
+    Route::delete('/{id}', 'SubjectController@delete');
+});
+
 
 /** Teacher */
 Route::group([
@@ -69,3 +87,22 @@ Route::group([
 ], function ($router) {
     Route::get('/info', 'StudentController@info');
 });
+
+/** Grade */
+Route::group([
+    'prefix' => 'grade',
+], function ($router) {
+    Route::get('/', 'GradeController@index');
+    Route::get('/{id}', 'GradeController@detail');
+    Route::post('/', 'GradeController@create');
+});
+
+/** Subject */
+Route::group([
+    'prefix' => 'subject',
+], function ($router) {
+    Route::get('/', 'SubjectController@index');
+    Route::get('/{id}', 'SubjectController@detail');
+    Route::post('/', 'SubjectController@create');
+});
+

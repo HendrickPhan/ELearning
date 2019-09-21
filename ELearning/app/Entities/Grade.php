@@ -12,6 +12,6 @@ class Grade extends Model
     protected $fillable = [
         'id',
         'name',
-        // 'status',
+        'status',
     ];
 }

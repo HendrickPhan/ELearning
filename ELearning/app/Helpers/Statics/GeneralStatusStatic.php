@@ -3,8 +3,8 @@
 namespace App\Helpers\Statics;
 
 class GeneralStatusStatic {
-    const PUBLISHED = 0;
-    const UNPUBLISHED = 1;
+    const UNPUBLISHED = 0;
+    const PUBLISHED = 1;
     const FEATURED = 2;
 
     public static function getStatusChoices()

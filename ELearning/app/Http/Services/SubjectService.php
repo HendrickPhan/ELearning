@@ -3,72 +3,74 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Request;
-use App\Entities\User;
-use Illuminate\Support\Facades\Hash;
-use App\Helpers\Statics\UserRolesStatic;
-use App\Helpers\Statics\UserStatusStatic;
-use App\Helpers\Traits\UploadImageTrait;
+use App\Helpers\Statics\GeneralStatusStatic;
+use App\Entities\Subject;
 
-class TeacherService {
-    use UploadImageTrait;
+class SubjectService {
 
-    public function register($request)
+    public function index($request)
     {
-        $data = $request->all();
-        $avatar = $request->file('avatar');
-        $filePath = $this->uploadAvatar($avatar);
+        $limit = $request->get('limit', 10);
+        $status = $request->get('status', null);
 
-        //basic user info
-        $userData = [
-            'name' => $data['name'], 
-            'email' => $data['email'], 
-            'password' => Hash::make($data['password']), 
-            'date_of_birth' => $data['date_of_birth'],
-            'role' => UserRolesStatic::TEACHER,
-            'description' => $data['description'],
-            'avatar' => $filePath,
-            'status' => UserStatusStatic::INACTIVE
-        ];
-        $user = User::create($userData);
+        $subjectsQuery = Subject::query();
 
-        //teacher info
-        $teacherData = [
-            'phone_number' => $data['phone_number'],
-            'address' => $data['address'],
-            'experience' => isset($data['experience']) ? $data['experience'] : null,
-        ];
-        $user->teacherInfomation()->create($teacherData);
-
-        //certificate info
-        $certificates = isset($data['certificates']) ? $data['certificates'] : [];
-        foreach($certificates as $certificate){
-            $image = $request->file('certificate-' . $certificate['id']);
-            $filePath = $image ? $this->uploadCertificate($image) : null;
-
-            $user->teacherCertificates()->attach($certificate['id'], [
-                'image' =>  $filePath,
-                'date_of_issue' => $certificate['date_of_issue']
-            ]);
+        if ($status) {
+            $subjectsQuery = $subjectsQuery->where('status', $status);
         }
 
-        //grade-subject info
-
-        $user->load(['teacherInfomation','teacherCertificates']);
+        $subjectsResult = $subjectsQuery->paginate($limit);
 
         return response()
-            ->json($user); 
+            ->json($subjectsResult); 
     }
 
-    public function info()
+    public function detail($id)
     {
-        $user = \Auth::user();
-        $user->load('teacherInfomation');
+        $subject = Subject::find($id);
 
         return response()
-            ->json($user);
+            ->json($subject);
+    }
+
+    public function create($request)
+    {
+        $data = $request->all();
+        $data['status'] = GeneralStatusStatic::UNPUBLISHED;
+        $subject = Subject::create($data);
+
+        return response()
+            ->json($subject);
+    }
+
+    public function update($request)
+    {
+        $data = $request->all();
+        $subject = Subject::find($request->id);
+        $subject->update($data);
+
+        return response()
+            ->json($subject);
+    }
+
+    public function updateStatus($request)
+    {
+        $subject = Subject::find($request->id);
+        $subject->status = $request->get('status');
+        $subject->save();
+
+        return response()
+            ->json($subject);
+    }
+
+    public function delete($id)
+    {
+        $subject = Subject::find($id);
+        $subject->delete();
+
+        return response()
+            ->json('Success');
     }
 }
-
-
 
 ?>
