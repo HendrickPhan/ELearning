@@ -46,7 +46,8 @@ class TeacherService {
             $filePath = $image ? $this->uploadCertificate($image) : null;
 
             $user->teacherCertificates()->attach($certificate['id'], [
-                'image' =>  $filePath
+                'image' =>  $filePath,
+                'date_of_issue' => $certificate['date_of_issue']
             ]);
         }
 
