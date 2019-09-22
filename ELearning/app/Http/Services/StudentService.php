@@ -36,10 +36,10 @@ class StudentService {
             'school' => $data['school'],
             'class' => $data['class'],
         ];
-        $user->studentInfomation()->create($studentData);
+        $user->studentInformation()->create($studentData);
 
 
-        $user->load('studentInfomation');
+        $user->load('studentInformation');
 
         return response()
             ->json($user); 
@@ -48,7 +48,7 @@ class StudentService {
     public function info()
     {
         $user = \Auth::user();
-        $user->load('studentInfomation');
+        $user->load('studentInformation');
 
         return response()
             ->json($user);
@@ -57,7 +57,7 @@ class StudentService {
     public function search($request)
     {
 
-        $user->load('studentInfomation');
+        $user->load('studentInformation');
 
         return response()
             ->json($user);

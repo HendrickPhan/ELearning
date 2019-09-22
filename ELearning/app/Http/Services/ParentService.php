@@ -36,7 +36,7 @@ class ParentService {
         $parentData = [
             'phone_number' => $data['phone_number'],
         ];
-        $user->parentInfomation()->create($parentData);
+        $user->parentInformation()->create($parentData);
 
         //student info
         $students = isset($data['students_ids']) ? $data['students_ids'] : [];
@@ -47,7 +47,7 @@ class ParentService {
             ]);
         }      
 
-        $user->load(['parentInfomation','studentParents']);
+        $user->load(['parentInformation','studentParents']);
 
         return response()
             ->json($user); 
@@ -56,7 +56,7 @@ class ParentService {
     public function info()
     {
         $user = \Auth::user();
-        $user->load('parentInfomation');
+        $user->load('parentInformation');
 
         return response()
             ->json($user);

@@ -37,7 +37,7 @@ class TeacherService {
             'address' => $data['address'],
             'experience' => isset($data['experience']) ? $data['experience'] : null,
         ];
-        $user->teacherInfomation()->create($teacherData);
+        $user->teacherInformation()->create($teacherData);
 
         //certificate info
         $certificates = isset($data['certificates']) ? $data['certificates'] : [];
@@ -52,7 +52,7 @@ class TeacherService {
 
         //grade-subject info
 
-        $user->load(['teacherInfomation','teacherCertificates']);
+        $user->load(['teacherInformation','teacherCertificates']);
 
         return response()
             ->json($user); 
@@ -61,7 +61,7 @@ class TeacherService {
     public function info()
     {
         $user = \Auth::user();
-        $user->load('teacherInfomation');
+        $user->load('teacherInformation');
 
         return response()
             ->json($user);

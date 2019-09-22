@@ -29,7 +29,6 @@ class RegisterStudentRequest extends FormRequest
             'password' => 'required',
             'name' => 'required',
             'avatar' => 'required|image',
-            'description' => 'required',
             'date_of_birth' => 'required|date',
         ];
     }
