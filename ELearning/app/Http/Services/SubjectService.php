@@ -53,16 +53,6 @@ class SubjectService {
             ->json($subject);
     }
 
-    public function updateStatus($request)
-    {
-        $subject = Subject::find($request->id);
-        $subject->status = $request->get('status');
-        $subject->save();
-
-        return response()
-            ->json($subject);
-    }
-
     public function delete($id)
     {
         $subject = Subject::find($id);

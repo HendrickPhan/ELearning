@@ -45,7 +45,6 @@ Route::group([
     'middleware' => 'auth.role:0'//admin
 ], function ($router) {
     Route::put('/{id}', 'GradeController@update');
-    Route::put('/{id}/status', 'GradeController@updateStatus');
     Route::delete('/{id}', 'GradeController@delete');
 });
     /** Admin-subject */
@@ -53,7 +52,6 @@ Route::group([
     'prefix' => 'admin/subject',
 ], function ($router) {
     Route::put('/{id}', 'SubjectController@update');
-    Route::put('/{id}/status', 'SubjectController@updateStatus');
     Route::delete('/{id}', 'SubjectController@delete');
 });
 

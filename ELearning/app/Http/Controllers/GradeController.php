@@ -37,11 +37,6 @@ class GradeController extends Controller
         return $this->service->update($request);
     }
 
-    public function updateStatus(Request $request)
-    {
-       return $this->service->updateStatus($request);
-    }
-
     public function delete($id)
     {
         return $this->service->delete($id);

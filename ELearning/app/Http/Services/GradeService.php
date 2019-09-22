@@ -54,16 +54,6 @@ class GradeService {
             ->json($grade);
     }
 
-    public function updateStatus($request)
-    {
-        $grade = Grade::find($request->id);
-        $grade->status = $request->get('status');
-        $grade->save();
-
-        return response()
-            ->json($grade);
-    }
-
     public function delete($id)
     {
         $grade = Grade::find($id);
