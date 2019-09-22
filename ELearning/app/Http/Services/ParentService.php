@@ -45,8 +45,6 @@ class ParentService {
             $user->studentParents()->attach($student['id'], [
                 'connect_status' =>  ConnectParentStatusStatic::PENDING,
             ]);
-
-
         }      
 
         $user->load(['parentInfomation','studentParents']);

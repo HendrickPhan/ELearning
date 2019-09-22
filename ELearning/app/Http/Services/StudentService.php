@@ -53,6 +53,18 @@ class StudentService {
         return response()
             ->json($user);
     }
+
+    public function search($request)
+    {
+
+        $user->load('studentInfomation');
+
+        return response()
+            ->json($user);
+    }
+
+
+
 }
 
 

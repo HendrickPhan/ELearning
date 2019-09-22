@@ -61,11 +61,12 @@ Route::group([
 ],  function ($router) {
     Route::post('/register', 'StudentController@register');
     Route::post('/info', 'StudentController@info');
+    Route::get('/', 'StudentController@search');
 });
 
 Route::group([
     'prefix' => 'student',
-    'middleware' => 'auth.role.2'//student
+    'middleware' => 'auth.role:2'//student
 ], function ($router) {
     Route::get('/info', 'StudentController@info');
 });
@@ -79,8 +80,8 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'student',
-    'middleware' => 'auth.role.3'//parent
+    'prefix' => 'parent',
+    'middleware' => 'auth.role:3'//parent
 ], function ($router) {
     Route::get('/info', 'ParentController@info');
 });

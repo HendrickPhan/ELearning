@@ -23,5 +23,10 @@ class StudentController extends Controller
     {
         return $this->service->info();
     }
+
+    public function search()
+    {
+        return $this->service->search();
+    }
     
 }
