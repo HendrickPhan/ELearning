@@ -19,6 +19,8 @@ class CreateTeacherGradeSubjectTable extends Migration
             $table->unsignedInteger('grade_id')->index();
             $table->unsignedInteger('subject_id')->index();
             $table->timestamps();
+
+            $table->unique(['user_id', 'grade_id', 'subject_id']);
         });
     }
 
