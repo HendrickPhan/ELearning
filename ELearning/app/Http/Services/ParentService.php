@@ -7,9 +7,10 @@ use App\Entities\User;
 use Illuminate\Support\Facades\Hash;
 use App\Helpers\Statics\UserRolesStatic;
 use App\Helpers\Statics\UserStatusStatic;
+use App\Helpers\Statics\ConnectParentStatusStatic;
 use App\Helpers\Traits\UploadImageTrait;
 
-class TeacherService {
+class ParentService {
     use UploadImageTrait;
 
     public function register($request)
@@ -24,36 +25,29 @@ class TeacherService {
             'email' => $data['email'], 
             'password' => Hash::make($data['password']), 
             'date_of_birth' => $data['date_of_birth'],
-            'role' => UserRolesStatic::TEACHER,
+            'role' => UserRolesStatic::PARENT,
             'description' => $data['description'],
             'avatar' => $filePath,
-            'status' => UserStatusStatic::INACTIVE
+            'status' => UserStatusStatic::ACTIVE
         ];
         $user = User::create($userData);
 
-        //teacher info
-        $teacherData = [
+        //parent info
+        $parentData = [
             'phone_number' => $data['phone_number'],
-            'address' => $data['address'],
-            'experience' => isset($data['experience']) ? $data['experience'] : null,
         ];
-        $user->teacherInformation()->create($teacherData);
+        $user->parentInformation()->create($parentData);
 
-        //certificate info
-        $certificates = isset($data['certificates']) ? $data['certificates'] : [];
-        foreach($certificates as $certificate){
-            $image = $request->file('certificate-' . $certificate['id']);
-            $filePath = $image ? $this->uploadCertificate($image) : null;
-
-            $user->teacherCertificates()->attach($certificate['id'], [
-                'image' =>  $filePath,
-                'date_of_issue' => $certificate['date_of_issue']
+        //student info
+        $students = isset($data['students_ids']) ? $data['students_ids'] : [];
+        foreach($students_ids as $students_id){
+            //
+            $user->studentParents()->attach($student['id'], [
+                'connect_status' =>  ConnectParentStatusStatic::PENDING,
             ]);
-        }
+        }      
 
-        //grade-subject info
-
-        $user->load(['teacherInformation','teacherCertificates']);
+        $user->load(['parentInformation','studentParents']);
 
         return response()
             ->json($user); 
@@ -62,7 +56,7 @@ class TeacherService {
     public function info()
     {
         $user = \Auth::user();
-        $user->load('teacherInformation');
+        $user->load('parentInformation');
 
         return response()
             ->json($user);

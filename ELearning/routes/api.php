@@ -65,8 +65,7 @@ Route::group([
 });
 
 Route::group([
-    'prefix' => 'teacher',
-    'middleware' => 'auth.role:1' //teacher
+    'prefix' => 'teacher'
 ], function ($router) {
     Route::get('/info', 'TeacherController@info');
 });
@@ -77,13 +76,28 @@ Route::group([
 ],  function ($router) {
     Route::post('/register', 'StudentController@register');
     Route::post('/info', 'StudentController@info');
+    Route::get('/', 'StudentController@search');
 });
 
 Route::group([
-    'prefix' => 'student',
-    'middleware' => 'student.auth'
+    'prefix' => 'student'
 ], function ($router) {
     Route::get('/info', 'StudentController@info');
+});
+
+
+/** Parent */
+Route::group([
+    'prefix' => 'parent'
+],  function ($router) {
+    Route::post('/register', 'ParentController@register');
+    Route::post('/info', 'ParentController@info');
+});
+
+Route::group([
+    'prefix' => 'parent'
+], function ($router) {
+    Route::get('/info', 'ParentController@info');
 });
 
 /** Grade */
@@ -103,4 +117,3 @@ Route::group([
     Route::get('/{id}', 'SubjectController@detail');
     Route::post('/', 'SubjectController@create');
 });
-

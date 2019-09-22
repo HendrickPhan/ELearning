@@ -4,17 +4,15 @@ namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TeacherInfomation extends Model
+class ParentInformation extends Model
 {
     //
-    protected $table = 'teacher_infomations';
+    protected $table = 'parent_informations';
 
     protected $fillable = [
         'id',
         'user_id',
         'phone_number',
-        'address',
-        'experience',
     ];
 
     public function user()

@@ -26,16 +26,17 @@ class StudentService {
             'role' => UserRolesStatic::STUDENT,
             'description' => $data['description'],
             'avatar' => $filePath,
-            'status' => UserStatusStatic::INACTIVE
+            'status' => UserStatusStatic::ACTIVE
         ];
         
         $user = User::create($userData);
 
         $studentData = [
             'phone_number' => $data['phone_number'],
-            'address' => $data['address'],
+            'school' => $data['school'],
+            'class' => $data['class'],
         ];
-        $user->studentInfomation()->create($studentData);
+        $user->studentInformation()->create($studentData);
 
 
         $user->load('studentInformation');
@@ -52,6 +53,18 @@ class StudentService {
         return response()
             ->json($user);
     }
+
+    public function search($request)
+    {
+
+        $user->load('studentInformation');
+
+        return response()
+            ->json($user);
+    }
+
+
+
 }
 
 
