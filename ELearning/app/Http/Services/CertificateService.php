@@ -13,7 +13,8 @@ class CertificateService {
     {
         $user = Auth::user();
         $data = $request->all();
-        $data['created_by'] = $user->id; 
+        // $data['created_by'] = $user->id; 
+        $data['created_by'] = 1; 
         $data['status'] = CertificateStatusStatic::NOT_FEATURED;
 
         $certificate = Certificate::create($data);

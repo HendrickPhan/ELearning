@@ -12,6 +12,34 @@ use App\Helpers\Traits\UploadImageTrait;
 class TeacherService {
     use UploadImageTrait;
 
+    public function index($request)
+    {
+        $limit = $request->get('limit', 10);
+        $keyword = $request->get('keyword', null);
+        $status = $request->get('status', null);
+        $teachersQuery = User::select(['id', 'name', 'email', 'description'])
+            ->where('role', UserRolesStatic::TEACHER);
+        
+        if ($keyword) {
+            $teachersQuery->where(function($query) use ($keyword){
+                $query->where('email', 'like', '%'.$keyword.'%');
+                $query->orWhere('name', 'like' , '%'.$keyword.'%');
+            });
+        }
+        
+        if (!is_null($status)) {
+            $teachersQuery->where('status', $status);
+        }
+
+        $teachers = $teachersQuery->paginate($limit)
+            ->appends(
+                request()->query()
+            );
+
+        return response()
+            ->json($teachers);         
+    }
+
     public function register($request)
     {
         $data = $request->all();

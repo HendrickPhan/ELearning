@@ -60,12 +60,14 @@ Route::group([
 Route::group([
     'prefix' => 'teacher'
 ],  function ($router) {
+    Route::get('/', 'TeacherController@index');
+    Route::get('/{id}', 'TeacherController@detail');
     Route::post('/register', 'TeacherController@register');
-    Route::post('/info', 'TeacherController@info');
 });
 
 Route::group([
-    'prefix' => 'teacher'
+    'prefix' => 'teacher',
+    'middleware' => 'auth.role:1'//teacher
 ], function ($router) {
     Route::get('/info', 'TeacherController@info');
 });
@@ -75,12 +77,12 @@ Route::group([
     'prefix' => 'student'
 ],  function ($router) {
     Route::post('/register', 'StudentController@register');
-    Route::post('/info', 'StudentController@info');
     Route::get('/', 'StudentController@search');
 });
 
 Route::group([
-    'prefix' => 'student'
+    'prefix' => 'student',
+    'middleware' => 'auth.role:2'//student
 ], function ($router) {
     Route::get('/info', 'StudentController@info');
 });
@@ -91,13 +93,20 @@ Route::group([
     'prefix' => 'parent'
 ],  function ($router) {
     Route::post('/register', 'ParentController@register');
-    Route::post('/info', 'ParentController@info');
 });
 
 Route::group([
-    'prefix' => 'parent'
+    'prefix' => 'parent',
+    'middleware' => 'auth.role:3'//parent
 ], function ($router) {
     Route::get('/info', 'ParentController@info');
+});
+
+/** Grade */
+Route::group([
+    'prefix' => 'certificate',
+], function ($router) {
+    Route::post('/', 'CertificateController@create');
 });
 
 /** Grade */
