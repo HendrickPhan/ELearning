@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateStudentParentsTable extends Migration
+class CreateStudentParentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateStudentParentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('student_parents', function (Blueprint $table) {
+        Schema::create('student_parent', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('user_id')->index();
-            $table->unsignedInteger('parent_id')->index();
-            $table->tinyInteger('status')->default(0);
+            $table->unsignedInteger('student_id')->index();
+            $table->tinyInteger('connect_status')->default(0);
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateStudentParentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('student_parents');
+        Schema::dropIfExists('student_parent');
     }
 }

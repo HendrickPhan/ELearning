@@ -15,6 +15,7 @@ class CreateParentInformationsTable extends Migration
     {
         Schema::create('parent_informations', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedInteger('user_id')->unique();
             $table->string('phone_number', 15);
             $table->timestamps();
         });

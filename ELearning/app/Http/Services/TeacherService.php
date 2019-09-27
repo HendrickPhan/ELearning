@@ -95,8 +95,15 @@ class TeacherService {
         return response()
             ->json($user);
     }
+
+    public function detail($id)
+    {
+        $user = User::find($id);
+        $user->load('teacherInformation');
+       
+        return response()
+            ->json($user);
+    }
 }
-
-
 
 ?>

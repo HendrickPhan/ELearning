@@ -26,13 +26,14 @@ class TeacherController extends Controller
         return $this->service->register($request);
     }
 
-    public function detail($id)
-    {
-        return $this->service->detail($id);
-    }
     public function info()
     {
         return $this->service->info();
+    }
+
+    public function detail($id)
+    {
+        return $this->service->detail($id);
     }
 
 }
