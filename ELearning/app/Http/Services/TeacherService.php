@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Entities\User;
 use Illuminate\Support\Facades\Hash;
 use App\Helpers\Statics\UserRolesStatic;
@@ -67,6 +68,24 @@ class TeacherService {
         ];
         $user->teacherInformation()->create($teacherData);
 
+        $user->load(['teacherInformation','teacherCertificates']);
+
+        $token = auth()->attempt([
+            'email' => $data['email'],
+            'password' => $data['password']
+        ]);
+
+        return response()->json([
+            'token' => $token,
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
+    }
+
+    public function attachCertificates($request)
+    {
+        $user = auth()->user();
+        $data = $request->all();
+
         //certificate info
         $certificates = isset($data['certificates']) ? $data['certificates'] : [];
         foreach($certificates as $certificate){
@@ -78,19 +97,36 @@ class TeacherService {
                 'date_of_issue' => $certificate['date_of_issue']
             ]);
         }
-
-        //grade-subject info
-
-        $user->load(['teacherInformation','teacherCertificates']);
+        
+        $user->load('teacherCertificates');
 
         return response()
-            ->json($user); 
+            ->json($user);
+    }
+
+    public function attachGradeSubjects($request)
+    {
+        $user = auth()->user();
+        $data = $request->all();
+
+        $gradeSubjects = isset($data['grade_subjects']) ? $data['grade_subjects'] : [];
+        foreach ($gradeSubjects as $gradeSubject) {
+            $user->teacherGradeSubject()->create($gradeSubject);
+        }
+
+        $user->load('teacherGradeSubject');
+        return response()
+        ->json($user);
     }
 
     public function info()
     {
         $user = \Auth::user();
-        $user->load('teacherInformation');
+        $user->load([
+            'teacherInformation',
+            'teacherCertificates',
+            'teacherGradeSubject',
+        ]);
 
         return response()
             ->json($user);

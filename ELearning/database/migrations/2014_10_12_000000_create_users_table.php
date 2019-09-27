@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->string('avatar', 100)->nullable();
             $table->timestamp('date_of_birth')->nullable();
             $table->text('description')->nullable();
+            $table->unsignedInteger('lp')->default(0);
+            $table->unsignedInteger('cp')->default(0);
             $table->tinyInteger('status');
             $table->timestamps();
         });

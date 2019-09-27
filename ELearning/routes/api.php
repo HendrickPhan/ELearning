@@ -44,15 +44,15 @@ Route::group([
     'prefix' => 'admin/grade',
     'middleware' => 'auth.role:0'//admin
 ], function ($router) {
-    Route::put('/{id}', 'GradeController@update');
-    Route::delete('/{id}', 'GradeController@delete');
+    Route::put('/{id}', 'GradeController@update')->where(['id' => '[0-9]+']);;
+    Route::delete('/{id}', 'GradeController@delete')->where(['id' => '[0-9]+']);;
 });
     /** Admin-subject */
 Route::group([
     'prefix' => 'admin/subject',
 ], function ($router) {
-    Route::put('/{id}', 'SubjectController@update');
-    Route::delete('/{id}', 'SubjectController@delete');
+    Route::put('/{id}', 'SubjectController@update')->where(['id' => '[0-9]+']);;
+    Route::delete('/{id}', 'SubjectController@delete')->where(['id' => '[0-9]+']);;
 });
 
 
@@ -61,8 +61,10 @@ Route::group([
     'prefix' => 'teacher'
 ],  function ($router) {
     Route::get('/', 'TeacherController@index');
-    Route::get('/{id}', 'TeacherController@detail');
+    Route::get('/{id}', 'TeacherController@detail')->where(['id' => '[0-9]+']);;
     Route::post('/register', 'TeacherController@register');
+    Route::post('/attach-certificates', 'TeacherController@attachCertificates');
+    Route::post('/attach-grade-subjects', 'TeacherController@attachGradeSubjects');
 });
 
 Route::group([

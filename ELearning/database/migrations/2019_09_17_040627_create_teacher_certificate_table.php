@@ -20,6 +20,8 @@ class CreateTeacherCertificateTable extends Migration
             $table->timestamp('date_of_issue');
             $table->string('image', 127)->nullable();
             $table->timestamps();
+
+            $table->unique(['user_id', 'certificate_id']);
         });
     }
 
