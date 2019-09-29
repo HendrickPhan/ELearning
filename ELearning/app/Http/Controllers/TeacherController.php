@@ -47,5 +47,4 @@ class TeacherController extends Controller
     {
         return $this->service->info();
     }
-
 }

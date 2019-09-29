@@ -82,8 +82,20 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(StudentInformation::class, 'user_id');
     }
 
-    public function studentParents(){
-        return $this->belongsToMany(Parent::class, 'student_parent', 'user_id', 'parent_id')
+    public function parentInformation()
+    {
+        return $this->hasOne(ParentInformation::class, 'user_id');
+    }
+
+    public function studentParents()//use parent_id to indentify
+    {
+        return $this->belongsToMany(ParentInformation::class, 'student_parent', 'user_id', 'student_id')
             ->withPivot(['connect_status']);
+    }
+
+    public function teacherStudents()//use student_id to indentify
+    {
+        return $this->belongsToMany(StudentInformation::class, 'teacher_students', 'teacher_id', 'student_id')
+            ->withPivot(['is_favorite_teacher','is_favorite_student']);
     }
 }

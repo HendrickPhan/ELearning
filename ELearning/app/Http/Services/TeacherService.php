@@ -131,8 +131,29 @@ class TeacherService {
         return response()
             ->json($user);
     }
+
+    public function detail($id)
+    {
+        $teacher = User::with([
+            'teacherInformation'.
+            'teacherCertificates'
+            ])
+            ->select(
+                'id', 
+                'name',
+                'email', 
+                'avatar',
+                'date_of_birth',
+                'description'
+            )
+            ->where('id', $id)
+            ->where('role', UserRolesStatic::TEACHER)
+            ->where('status', UserStatusStatic::ACTIVE)
+            ->first();
+
+        return response()
+            ->json($teacher);
+    }
 }
-
-
 
 ?>
