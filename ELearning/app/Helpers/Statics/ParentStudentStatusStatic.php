@@ -2,12 +2,12 @@
 
 namespace App\Helpers\Statics;
 
-class ConnectParentStatusStatic {
+class ParentStudentStatusStatic {
     const PENDING = 0;
     const APPROVED = 1;
     const REJECTED = 2;
 
-    public static function getConnectStatusChoices()
+    public static function getStatusChoices()
     {
         return [
             self::PENDING => trans('messages.status_pending'),
@@ -16,7 +16,7 @@ class ConnectParentStatusStatic {
         ];
     }
 
-    public static function getConnectStatusText($status)
+    public static function getStatusText($status)
     {
         $statusList = self::getConnectChoices();
         return isset($statusList[$status]) ? $statusList[$status] : '-empty-';
@@ -24,6 +24,4 @@ class ConnectParentStatusStatic {
 
     
 }
-
-
 ?>

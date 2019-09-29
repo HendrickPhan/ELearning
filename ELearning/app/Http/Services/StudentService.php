@@ -3,15 +3,14 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Request;
-use App\Entities\User;
-use App\Entities\StudentInformations;
-use App\Entities\StudentParent;
-use App\Entities\TeacherInformation;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Entities\User;
+use App\Entities\ParentStudent;
 use App\Helpers\Statics\UserRolesStatic;
 use App\Helpers\Statics\UserStatusStatic;
-use App\Helpers\Statics\ConnectParentStatusStatic;
+use App\Helpers\Statics\ParentStudentStatusStatic;
 use App\Helpers\Traits\UploadImageTrait;
 
 class StudentService {
@@ -74,8 +73,15 @@ class StudentService {
 
         $user->load('studentInformation');
 
-        return response()
-            ->json($user); 
+        $token = auth()->attempt([
+            'email' => $data['email'],
+            'password' => $data['password']
+        ]);
+
+        return response()->json([
+            'token' => $token,
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
 
     public function info()
@@ -96,104 +102,68 @@ class StudentService {
             ->json($user);
     }
 
-    public function approve($request)
+    public function subscribeStudent($id)
     {
-        $data = [
-            'connect_status' => ConnectParentStatusStatic::APPROVED,
-        ];
-        $updateConnectStatus = StudentParent::find($request->id)->update($data);
-
+        $user = Auth::user();
+        $studentSubscribed = $user->childsSubscribed()->create(
+            [
+                'student_id' => $id,
+                'status' => ParentStudentStatusStatic::PENDING
+            ]
+        );
         return response()
-            ->json($updateConnectStatus);
+            ->json($studentSubscribed);
     }
 
-    public function reject($request)
+    public function subscribedParentList($request)
     {
-        $data = [
-            'connect_status' => ConnectParentStatusStatic::REJECTED
-        ];
-        $updateConnectStatus = StudentParent::find($request->id)->update($data);
+        $status = $request->get('status', ParentStudentStatusStatic::APPROVED);
+        $user = Auth::user();
 
-        return response()
-            ->json($updateConnectStatus);
-    }
-
-    public function parentList()
-    {
-        $user = \Auth::user();
-        $parents = DB::table('users')
-            ->join('student_parent', 'users.id', '=', 'student_parent.user_id')
-            ->join('parent_informations', 'users.id', '=', 'parent_informations.user_id')
-            ->where('student_parent.student_id',$user->id)
-            ->select('users.id','users.name','parent_informations.phone_number','student_parent.connect_status')
+        $subscribedParentList = $user->parentsSubscribed()
+            ->with([
+                'parent' => function($q){
+                    $q->select(['id', 'name', 'email', 'avatar']);
+                    $q->where('status', UserStatusStatic::ACTIVE);
+                },
+                'parent.parentInformation'
+            ])
+            ->where('status', $status)
             ->get();
             
         return response()
-            ->json($parents);
+            ->json($subscribedParentList);
     }
 
-    public function searchTeacher($request)
+    public function approveParentSubscribe($id)
     {
-        $limit = $request->get('limit', 10);
-        $keyword = $request->get('keyword', null);
-        $status = $request->get('status', null);
+        $parentSubscribe = ParentStudent::where('id', $id)
+            ->where('student_id', Auth::id())
+            ->first();
 
-        $teachersQuery = DB::table('teacher_informations')
-            ->join('users', 'teacher_informations.user_id', '=', 'users.id')
-            ->join('teacher_grade_subject', 'teacher_informations.id', '=', 'teacher_grade_subject.teacher_id')
-            ->join('grades', 'teacher_grade_subject.grade_id', '=', 'grades.id')
-            ->join('subjects', 'teacher_grade_subject.subject_id', '=', 'subjects.id')
-            ->select('teacher_informations.id','users.name','users.email','grades.name as grade','subjects.name as subject');
-
-        if ($keyword) {
-            $teachersQuery->where(function($query) use ($keyword){
-                $query->where('users.email', 'like', '%'.$keyword.'%');
-                $query->orWhere('users.name', 'like' , '%'.$keyword.'%');
-                $query->orWhere('grades.name', 'like' , '%'.$keyword.'%');
-                $query->orWhere('subjects.name', 'like' , '%'.$keyword.'%');
-            });
+        if ($parentSubscribe) {
+            $parentSubscribe->status = ParentStudentStatusStatic::APPROVED;
+            $parentSubscribe->save();
         }
 
-        if (!is_null($status)) {
-            $teachersQuery->where('users.status', $status);
+        return response()
+            ->json($parentSubscribe);
+    }
+
+    public function rejectParentSubscribe($id)
+    {
+        $parentSubscribe = ParentStudent::where('id', $id)
+            ->where('student_id', Auth::id())
+            ->first();
+
+        if ($parentSubscribe) {
+            $parentSubscribe->status = ParentStudentStatusStatic::REJECTED;
+            $parentSubscribe->save();
         }
 
-        $teachers = $teachersQuery->paginate($limit)
-            ->appends(
-                request()->query()
-            );
-
         return response()
-            ->json($teachers);     
+            ->json($parentSubscribe);
     }
-
-    public function detailTeacher($id)
-    {
-        $teachersQuery = DB::table('teacher_informations')
-            ->join('users', 'teacher_informations.user_id', '=', 'users.id')
-            ->join('teacher_grade_subject', 'teacher_informations.id', '=', 'teacher_grade_subject.teacher_id')
-            ->join('grades', 'teacher_grade_subject.grade_id', '=', 'grades.id')
-            ->join('subjects', 'teacher_grade_subject.subject_id', '=', 'subjects.id')
-            ->where('teacher_informations.id',$id)
-            ->select('teacher_informations.id','users.name','users.email','grades.name','subjects.name')
-            ->get();
-
-        return response()
-            ->json($teachersQuery);
-    }
-
-    public function subscribeTeacher($id)
-    {
-        $user = \Auth::user();
-        $user->teacherStudents()->attach($id,[
-            'is_favorite_teacher' => 1,
-            'is_favorite_student' => 0,
-        ]);
-        $user->load(['studentInformation','teacherStudents']);
-        return response()
-            ->json($user);
-    }
-
 }
 
 ?>

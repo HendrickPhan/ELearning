@@ -7,6 +7,7 @@ use App\Http\Requests\AttachCertificatesRequest;
 use App\Http\Requests\AttachGradeSubjectsRequest;
 use App\Http\Requests\RegisterTeacherRequest;
 use App\Http\Services\TeacherService;
+use App\Http\Requests\SubscribeTeacherRequest;
 
 class TeacherController extends Controller
 {
@@ -46,5 +47,10 @@ class TeacherController extends Controller
     public function info() //only teacher can view his info
     {
         return $this->service->info();
+    }
+
+    public function subscribeTeacher(SubscribeTeacherRequest $request)
+    {
+        return $this->service->subscribeTeacher($request->id);
     }
 }

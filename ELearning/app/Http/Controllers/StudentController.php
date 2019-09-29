@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterStudentRequest;
+use App\Http\Requests\SubscribeStudentRequest;
 use App\Http\Services\StudentService;
-
 
 class StudentController extends Controller
 {
+    protected $service;
     //
     public function __construct(StudentService $studentService)
     {
@@ -35,34 +36,23 @@ class StudentController extends Controller
         return $this->service->detail($id);
     }
 
-    public function approve(Request $request)
+    public function subscribeStudent(SubscribeStudentRequest $request)
     {
-        return $this->service->approve($request);
+        return $this->service->subscribeStudent($request->id);
     }
 
-    public function reject(Request $request)
+    public function approveParentSubscribe($id)
     {
-        return $this->service->reject($request);
+        return $this->service->approveParentSubscribe($id);
     }
 
-    public function parentList()
+    public function rejectParentSubscribe($id)
     {
-        return $this->service->parentList();
+        return $this->service->rejectParentSubscribe($id);
     }
 
-    public function searchTeacher(Request $request)
+    public function subscribedParentList(Request $request)
     {
-        return $this->service->searchTeacher($request);
+        return $this->service->subscribedParentList($request);
     }
-
-    public function detailTeacher($id)
-    {
-        return $this->service->detailTeacher($id);
-    }
-    
-    public function subscribeTeacher($id)
-    {
-        return $this->service->subscribeTeacher($id);
-    }
-    
 }

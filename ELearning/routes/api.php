@@ -71,10 +71,16 @@ Route::group([
     'prefix' => 'teacher',
     'middleware' => 'auth.role:1'//teacher
 ], function ($router) {
-    Route::post('/register', 'TeacherController@register');
     Route::get('/info', 'TeacherController@info');
 });
 
+    /** Teacher-Student subscribe*/
+Route::group([
+    'prefix' => 'teacher',
+    'middleware' => 'auth.role:2'//student
+], function ($router) {
+    Route::post('{id}/subscribe', 'TeacherController@subscribeTeacher');
+});
 
 /** Student */
 Route::group([
@@ -82,31 +88,34 @@ Route::group([
 ],  function ($router) {
     Route::post('/register', 'StudentController@register');
     Route::get('/', 'StudentController@index');
-    Route::get('/info', 'StudentController@info');
-    //Approve parent
-    Route::put('/parent/approve', 'StudentController@approve');
-    Route::put('/parent/reject', 'StudentController@reject');
-    Route::get('/parent', 'StudentController@parentList');
-    //Subcribe teacher
-    Route::get('/teacher', 'StudentController@searchTeacher');
-    Route::get('/teacher/{id}', 'StudentController@detailTeacher');
-    Route::post('/teacher/{id}/subscribe', 'StudentController@subscribeTeacher');
+    Route::get('/{id}', 'StudentController@detail')->where(['id' => '[0-9]+']); 
 
-    Route::get('/{id}', 'StudentController@detail');//de o cuoi 
+    Route::post('/{id}/subscribe', 'StudentController@subscribeStudent');
+    Route::get('/subscribe', 'StudentController@subscribedParentList');
+    Route::put('/subscribe/{id}/approve', 'StudentController@approveParentSubscribe');
+    Route::put('/subscribe/{id}/reject', 'StudentController@rejectParentSubscribe');
+
 });
 
+Route::group([
+    'prefix' => 'teacher',
+    'middleware' => 'auth.role:2'//student
+], function ($router) {
+    Route::get('/info', 'StudentController@info');
+});
 
 /** Parent */
 Route::group([
     'prefix' => 'parent'
 ],  function ($router) {
     Route::post('/register', 'ParentController@register');
-    Route::post('/student/{id}/subscribe', 'ParentController@subscribe');
     Route::get('/info', 'ParentController@info');
+
+    Route::post('/student/{id}/subscribe', 'ParentController@subscribe');
 });
 
 
-/** Grade */
+/** Certificate */
 Route::group([
     'prefix' => 'certificate',
 ], function ($router) {

@@ -4,24 +4,22 @@ namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TeacherStudent extends Model
+class ParentStudent extends Model
 {
     //
-    protected $table = 'teacher_student';
+    protected $table = 'parent_student';
 
     protected $fillable = [
         'id',
-        'teacher_id',
+        'parent_id',
         'student_id',
-        'is_favorite_teacher',
-        'is_favorite_studnet',
+        'status',
     ];
 
-    public function teacher()
+    public function parent()
     {
-        return $this->belongsTo(User::class, 'teacher_id');
+        return $this->belongsTo(User::class, 'parent_id');
     }
-
 
     public function student()
     {
