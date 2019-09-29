@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Entities\User;
+use App\Entities\TeacherStudent;
 use Illuminate\Support\Facades\Hash;
 use App\Helpers\Statics\UserRolesStatic;
 use App\Helpers\Statics\UserStatusStatic;
@@ -17,8 +18,8 @@ class TeacherService {
     {
         $limit = $request->get('limit', 10);
         $keyword = $request->get('keyword', null);
-        $status = $request->get('status', null);
-        $teachersQuery = User::select(['id', 'name', 'email', 'description'])
+        $status = $request->get('status', UserStatusStatic::ACTIVE);
+        $teachersQuery = User::select(['id', 'name', 'email', 'description', 'avatar'])
             ->where('role', UserRolesStatic::TEACHER);
         
         if ($keyword) {
@@ -131,8 +132,41 @@ class TeacherService {
         return response()
             ->json($user);
     }
+
+    public function detail($id)
+    {
+        $teacher = User::with([
+            'teacherInformation'.
+            'teacherCertificates'
+            ])
+            ->select(
+                'id', 
+                'name',
+                'email', 
+                'avatar',
+                'date_of_birth',
+                'description'
+            )
+            ->where('id', $id)
+            ->where('role', UserRolesStatic::TEACHER)
+            ->where('status', UserStatusStatic::ACTIVE)
+            ->first();
+
+        return response()
+            ->json($teacher);
+    }
+
+    public function subscribeTeacher($id)
+    {
+        $user = Auth::user();
+        $teachersSubscribed = $user->teachersSubscribed()->create(
+            [
+                'teacher_id' => $id
+            ]
+        );
+        return response()
+            ->json($teachersSubscribed);
+    }
 }
-
-
 
 ?>

@@ -3,14 +3,46 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Request;
-use App\Entities\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Entities\User;
+use App\Entities\ParentStudent;
 use App\Helpers\Statics\UserRolesStatic;
 use App\Helpers\Statics\UserStatusStatic;
+use App\Helpers\Statics\ParentStudentStatusStatic;
 use App\Helpers\Traits\UploadImageTrait;
 
 class StudentService {
     use UploadImageTrait;
+
+    public function index($request)
+    {
+        $limit = $request->get('limit', 10);
+        $keyword = $request->get('keyword', null);
+        $status = $request->get('status', null);
+        $studentsQuery = User::select(['id', 'name', 'email', 'description'])
+            ->where('role', UserRolesStatic::STUDENT);
+        
+        if ($keyword) {
+            $studentsQuery->where(function($query) use ($keyword){
+                $query->where('email', 'like', '%'.$keyword.'%');
+                $query->orWhere('name', 'like' , '%'.$keyword.'%');
+            });
+        }
+        
+        if (!is_null($status)) {
+            $studentsQuery->where('status', $status);
+        }
+
+        $students = $studentsQuery->paginate($limit)
+            ->appends(
+                request()->query()
+            );
+
+        return response()
+            ->json($students);         
+    }
 
     public function register($request)
     {
@@ -41,8 +73,15 @@ class StudentService {
 
         $user->load('studentInformation');
 
-        return response()
-            ->json($user); 
+        $token = auth()->attempt([
+            'email' => $data['email'],
+            'password' => $data['password']
+        ]);
+
+        return response()->json([
+            'token' => $token,
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
 
     public function info()
@@ -54,19 +93,77 @@ class StudentService {
             ->json($user);
     }
 
-    public function search($request)
+    public function detail($id)
     {
-
+        $user = User::find($id);
         $user->load('studentInformation');
-
+       
         return response()
             ->json($user);
     }
 
+    public function subscribeStudent($id)
+    {
+        $user = Auth::user();
+        $studentSubscribed = $user->childsSubscribed()->create(
+            [
+                'student_id' => $id,
+                'status' => ParentStudentStatusStatic::PENDING
+            ]
+        );
+        return response()
+            ->json($studentSubscribed);
+    }
 
+    public function subscribedParentList($request)
+    {
+        $status = $request->get('status', ParentStudentStatusStatic::APPROVED);
+        $user = Auth::user();
 
+        $subscribedParentList = $user->parentsSubscribed()
+            ->with([
+                'parent' => function($q){
+                    $q->select(['id', 'name', 'email', 'avatar']);
+                    $q->where('status', UserStatusStatic::ACTIVE);
+                },
+                'parent.parentInformation'
+            ])
+            ->where('status', $status)
+            ->get();
+            
+        return response()
+            ->json($subscribedParentList);
+    }
+
+    public function approveParentSubscribe($id)
+    {
+        $parentSubscribe = ParentStudent::where('id', $id)
+            ->where('student_id', Auth::id())
+            ->first();
+
+        if ($parentSubscribe) {
+            $parentSubscribe->status = ParentStudentStatusStatic::APPROVED;
+            $parentSubscribe->save();
+        }
+
+        return response()
+            ->json($parentSubscribe);
+    }
+
+    public function rejectParentSubscribe($id)
+    {
+        $parentSubscribe = ParentStudent::where('id', $id)
+            ->where('student_id', Auth::id())
+            ->first();
+
+        if ($parentSubscribe) {
+            $parentSubscribe->status = ParentStudentStatusStatic::REJECTED;
+            $parentSubscribe->save();
+        }
+
+        return response()
+            ->json($parentSubscribe);
+    }
 }
-
-
 
 ?>

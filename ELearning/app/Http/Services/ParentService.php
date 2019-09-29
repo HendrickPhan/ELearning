@@ -38,19 +38,17 @@ class ParentService {
         ];
         $user->parentInformation()->create($parentData);
 
-        //student info
-        $students = isset($data['students_ids']) ? $data['students_ids'] : [];
-        foreach($students_ids as $students_id){
-            //
-            $user->studentParents()->attach($student['id'], [
-                'connect_status' =>  ConnectParentStatusStatic::PENDING,
-            ]);
-        }      
+        $user->load(['parentInformation']);
 
-        $user->load(['parentInformation','studentParents']);
+        $token = auth()->attempt([
+            'email' => $data['email'],
+            'password' => $data['password']
+        ]);
 
-        return response()
-            ->json($user); 
+        return response()->json([
+            'token' => $token,
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
     }
 
     public function info()
@@ -61,8 +59,19 @@ class ParentService {
         return response()
             ->json($user);
     }
-}
+    
+    public function subscribe($id)
+    {
+        $user = \Auth::user();
+        $user->studentParents()->attach($id, [
+            'connect_status' =>  ConnectParentStatusStatic::PENDING,
+        ]);
+        $user->load(['parentInformation','studentParents']);
+        return response()
+            ->json($user);
+    }
 
+}
 
 
 ?>

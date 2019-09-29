@@ -23,5 +23,10 @@ class ParentController extends Controller
     {
         return $this->service->info();
     }
+    
+    public function subscribe($id)
+    {
+        return $this->service->subscribe($id);
+    }
 
 }

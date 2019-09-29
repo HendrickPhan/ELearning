@@ -61,7 +61,7 @@ Route::group([
     'prefix' => 'teacher'
 ],  function ($router) {
     Route::get('/', 'TeacherController@index');
-    Route::get('/{id}', 'TeacherController@detail')->where(['id' => '[0-9]+']);;
+    Route::get('/{id}', 'TeacherController@detail')->where(['id' => '[0-9]+']);
     Route::post('/register', 'TeacherController@register');
     Route::post('/attach-certificates', 'TeacherController@attachCertificates');
     Route::post('/attach-grade-subjects', 'TeacherController@attachGradeSubjects');
@@ -74,37 +74,48 @@ Route::group([
     Route::get('/info', 'TeacherController@info');
 });
 
+    /** Teacher-Student subscribe*/
+Route::group([
+    'prefix' => 'teacher',
+    'middleware' => 'auth.role:2'//student
+], function ($router) {
+    Route::post('{id}/subscribe', 'TeacherController@subscribeTeacher');
+});
+
 /** Student */
 Route::group([
     'prefix' => 'student'
 ],  function ($router) {
     Route::post('/register', 'StudentController@register');
-    Route::get('/', 'StudentController@search');
+    Route::get('/', 'StudentController@index');
+    Route::get('/{id}', 'StudentController@detail')->where(['id' => '[0-9]+']); 
+
+    Route::post('/{id}/subscribe', 'StudentController@subscribeStudent');
+    Route::get('/subscribe', 'StudentController@subscribedParentList');
+    Route::put('/subscribe/{id}/approve', 'StudentController@approveParentSubscribe');
+    Route::put('/subscribe/{id}/reject', 'StudentController@rejectParentSubscribe');
+
 });
 
 Route::group([
-    'prefix' => 'student',
+    'prefix' => 'teacher',
     'middleware' => 'auth.role:2'//student
 ], function ($router) {
     Route::get('/info', 'StudentController@info');
 });
-
 
 /** Parent */
 Route::group([
     'prefix' => 'parent'
 ],  function ($router) {
     Route::post('/register', 'ParentController@register');
-});
-
-Route::group([
-    'prefix' => 'parent',
-    'middleware' => 'auth.role:3'//parent
-], function ($router) {
     Route::get('/info', 'ParentController@info');
+
+    Route::post('/student/{id}/subscribe', 'ParentController@subscribe');
 });
 
-/** Grade */
+
+/** Certificate */
 Route::group([
     'prefix' => 'certificate',
 ], function ($router) {
