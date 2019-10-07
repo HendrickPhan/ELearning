@@ -95,24 +95,24 @@ class StudentService {
 
     public function detail($id)
     {
-        $user = User::find($id);
-        $user->load('studentInformation');
-       
-        return response()
-            ->json($user);
-    }
+        $student = User::with([
+            'studentInformation'
+            ])
+            ->select(
+                'id', 
+                'name',
+                'email', 
+                'avatar',
+                'date_of_birth',
+                'description'
+            )
+            ->where('id', $id)
+            ->where('role', UserRolesStatic::STUDENT)
+            ->where('status', UserStatusStatic::ACTIVE)
+            ->first();
 
-    public function subscribeStudent($id)
-    {
-        $user = Auth::user();
-        $studentSubscribed = $user->childsSubscribed()->create(
-            [
-                'student_id' => $id,
-                'status' => ParentStudentStatusStatic::PENDING
-            ]
-        );
         return response()
-            ->json($studentSubscribed);
+            ->json($teacher);
     }
 
     public function subscribedParentList($request)
@@ -163,6 +163,59 @@ class StudentService {
 
         return response()
             ->json($parentSubscribe);
+    }
+
+    public function update($request)
+    {
+        $userAuth = \Auth::user();
+        $data = $request->all();    
+        $user = User::find($userAuth->id);
+
+        $avatar = $request->file('avatar');
+
+        //basic user info
+        if(isset($data['name']))
+        {
+            $user['name'] = $data['name'];
+        }
+        if(isset($data['password']))
+        {
+            $user['password'] = Hash::make($data['password']);
+        }
+        if(isset($data['date_of_birth']))
+        {
+            $user['date_of_birth'] = $data['date_of_birth'];
+        }
+        if(isset($data['description']))
+        {
+            $user['description'] = $data['description'];
+        }
+        if(isset($avatar))
+        {
+            $filePath = $this->uploadAvatar($avatar);
+            $user['avatar'] = $filePath;
+        }
+        $user->save();
+
+        //student info
+        if(isset($data['phone_number']))
+        {
+            $user->studentInformation()->update(['phone_number' => $data['phone_number']]);
+        }
+        if(isset($data['school']))
+        {
+            $user->studentInformation()->update(['school' => $data['school']]);
+        }
+        if(isset($data['class']))
+        {
+            $user->studentInformation()->update(['class' => $data['class']]);
+        }
+        
+
+        $user->load('studentInformation');
+       
+        return response()
+            ->json($user);
     }
 }
 

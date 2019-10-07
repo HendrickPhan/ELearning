@@ -156,17 +156,70 @@ class TeacherService {
             ->json($teacher);
     }
 
-    public function subscribeTeacher($id)
+    public function update($request)
     {
-        $user = Auth::user();
-        $teachersSubscribed = $user->teachersSubscribed()->create(
-            [
-                'teacher_id' => $id
-            ]
-        );
+        $userAuth = \Auth::user();
+        $data = $request->all();    
+        $user = User::find($userAuth->id);
+
+        $avatar = $request->file('avatar');
+
+        //basic user info
+        if(isset($data['name']))
+        {
+            $user['name'] = $data['name'];
+        }
+        if(isset($data['password']))
+        {
+            $user['password'] = Hash::make($data['password']);
+        }
+        if(isset($data['date_of_birth']))
+        {
+            $user['date_of_birth'] = $data['date_of_birth'];
+        }
+        if(isset($data['description']))
+        {
+            $user['description'] = $data['description'];
+        }
+        if(isset($avatar))
+        {
+            $filePath = $this->uploadAvatar($avatar);
+            $user['avatar'] = $filePath;
+        }
+        $user->save();
+
+        //teacher info
+        if(isset($data['phone_number']))
+        {
+            $user->teacherInformation()->update(['phone_number' => $data['phone_number']]);
+        }
+        if(isset($data['address']))
+        {
+            $user->teacherInformation()->update(['address' => $data['address']]);
+        }
+        if(isset($data['experience']))
+        {
+            $user->teacherInformation()->update(['experience' => $data['experience']]);
+        }
+
+        //certificate info
+        $certificates = isset($data['certificates']) ? $data['certificates'] : [];
+        foreach($certificates as $certificate){
+            $image = $request->file('certificate-' . $certificate['id']);
+            $filePath = $image ? $this->uploadCertificate($image) : null;
+
+            $user->teacherCertificates()->update($certificate['id'], [
+                'image' =>  $filePath,
+                'date_of_issue' => $certificate['date_of_issue']
+            ]);
+        }
+
+        $user->load('teacherInformation');
+       
         return response()
-            ->json($teachersSubscribed);
+            ->json($user);
     }
+
 }
 
 ?>
