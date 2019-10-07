@@ -10,13 +10,13 @@ class EssayQuestion extends Model
     protected $table = 'essay_questions';
 
     protected $fillable = [
-        'document',
+        'essay_id',
         'question',
         'point'
     ];
 
-    public function createdBy()
+    public function essay()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Essay::class, 'user_id');
     }
 }

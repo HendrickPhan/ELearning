@@ -15,6 +15,7 @@ class CreateEssaysTable extends Migration
     {
         Schema::create('essays', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('name', 50);
             $table->unsignedInteger('created_by')->index();
             $table->timestamps();
         });

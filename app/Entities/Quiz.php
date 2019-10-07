@@ -9,8 +9,17 @@ class Quiz extends Model
     //
     protected $table = 'quizs';
 
+    protected $fillable = [
+        'name'
+    ];
+    
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function quizQuestions()
+    {
+        return $this->hasMany(QuizQuestion::class, 'quiz_id');
     }
 }
