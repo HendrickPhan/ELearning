@@ -12,7 +12,7 @@ class CourseService {
     public function create($request)
     {
         $data = $request->all();
-        $data['teacher_id'] = Auth::id(); 
+        $data['teacher_id'] = auth()->id(); 
         $data['status'] = CourseStatusStatic::UNPUBLISHED;
         $data['lp_complete_bonus'] = $data['tuition_fee'] > 100 ? $data['tuition_fee'] : 100; 
         $course = Course::create($data);

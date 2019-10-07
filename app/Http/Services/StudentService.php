@@ -86,7 +86,7 @@ class StudentService {
 
     public function info()
     {
-        $user = \Auth::user();
+        $user = auth()->user();
         $user->load('studentInformation');
 
         return response()
@@ -112,7 +112,7 @@ class StudentService {
             ->first();
 
         return response()
-            ->json($teacher);
+            ->json($student);
     }
 
     public function subscribedParentList($request)
@@ -138,7 +138,7 @@ class StudentService {
     public function approveParentSubscribe($id)
     {
         $parentSubscribe = ParentStudent::where('id', $id)
-            ->where('student_id', Auth::id())
+            ->where('student_id', auth()->id())
             ->first();
 
         if ($parentSubscribe) {
@@ -153,7 +153,7 @@ class StudentService {
     public function rejectParentSubscribe($id)
     {
         $parentSubscribe = ParentStudent::where('id', $id)
-            ->where('student_id', Auth::id())
+            ->where('student_id', auth()->id())
             ->first();
 
         if ($parentSubscribe) {

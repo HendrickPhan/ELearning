@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Auth;
 use App\Helpers\Statics\UserStatusStatic;
 
 class ActiveStatusAuthenticate
@@ -17,7 +18,7 @@ class ActiveStatusAuthenticate
      */
     public function handle($request, Closure $next)
     {
-        $user = \Auth::user();
+        $user = auth()->user();
         if (!$user || $user->status != UserStatusStatic::ACTIVE) {
             return response()->json(
                 trans('message.forbidden') ,

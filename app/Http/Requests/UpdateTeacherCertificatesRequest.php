@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateUserRequest extends FormRequest
+class UpdateTeacherCertificatesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +23,12 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules()
     {
-        $userId = auth()->id();
         return [
             //
-            'avatar' => 'image',
-            'date_of_birth' => 'date',
-            'email' => 'email|unique:users,email,'.$userId,
+            'certificates' => 'array',
+            'certificates.*.id' =>'exists:certificates,id',
+            'certificates.*.date_of_issue' =>'date',
+            'certificates.*.remove' =>'in:0,1',
         ];
     }
 }

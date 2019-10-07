@@ -56,9 +56,10 @@ Route::group([
 
 /** User*/
 Route::group([
+    'middleware' => 'auth:api',
     'prefix' => 'user',
 ],  function ($router) {
-    Route::put('/update', 'UserController@update');
+    Route::put('/', 'UserController@update');
 });
 
 /** Teacher */
@@ -78,6 +79,8 @@ Route::group([
     'middleware' => 'auth.role:1' //teacher
 ], function ($router) {
     Route::get('/info', 'TeacherController@info');
+    Route::put('/infomation', 'TeacherController@updateInfomation');
+    Route::put('/certificates', 'TeacherController@updateCertificates');
 });
 
 /** Teacher-Student subscribe*/

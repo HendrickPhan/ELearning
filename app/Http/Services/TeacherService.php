@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Entities\Certificate;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Entities\User;
@@ -40,6 +41,19 @@ class TeacherService {
 
         return response()
             ->json($teachers);         
+    }
+
+    public function info()
+    {
+        $user = Auth::user();
+        $user->load([
+            'teacherInformation',
+            'teacherCertificates',
+            'teacherGradeSubject',
+        ]);
+
+        return response()
+            ->json($user);
     }
 
     public function register($request)
@@ -88,7 +102,7 @@ class TeacherService {
         $data = $request->all();
 
         //certificate info
-        $certificates = isset($data['certificates']) ? $data['certificates'] : [];
+        $certificates = $data['certificates'];
         foreach($certificates as $certificate){
             $image = $request->file('certificate-' . $certificate['id']);
             $filePath = $image ? $this->uploadCertificate($image) : null;
@@ -110,7 +124,7 @@ class TeacherService {
         $user = auth()->user();
         $data = $request->all();
 
-        $gradeSubjects = isset($data['grade_subjects']) ? $data['grade_subjects'] : [];
+        $gradeSubjects = $data['grade_subjects'];
         foreach ($gradeSubjects as $gradeSubject) {
             $user->teacherGradeSubject()->create($gradeSubject);
         }
@@ -120,19 +134,7 @@ class TeacherService {
         ->json($user);
     }
 
-    public function info()
-    {
-        $user = \Auth::user();
-        $user->load([
-            'teacherInformation',
-            'teacherCertificates',
-            'teacherGradeSubject',
-        ]);
-
-        return response()
-            ->json($user);
-    }
-
+    
     public function detail($id)
     {
         $teacher = User::with([
@@ -156,66 +158,42 @@ class TeacherService {
             ->json($teacher);
     }
 
-    public function update($request)
+    public function updateInfomation($request)
     {
-        $userAuth = \Auth::user();
-        $data = $request->all();    
-        $user = User::find($userAuth->id);
-
-        $avatar = $request->file('avatar');
-
-        //basic user info
-        if(isset($data['name']))
-        {
-            $user['name'] = $data['name'];
-        }
-        if(isset($data['password']))
-        {
-            $user['password'] = Hash::make($data['password']);
-        }
-        if(isset($data['date_of_birth']))
-        {
-            $user['date_of_birth'] = $data['date_of_birth'];
-        }
-        if(isset($data['description']))
-        {
-            $user['description'] = $data['description'];
-        }
-        if(isset($avatar))
-        {
-            $filePath = $this->uploadAvatar($avatar);
-            $user['avatar'] = $filePath;
-        }
-        $user->save();
-
-        //teacher info
-        if(isset($data['phone_number']))
-        {
-            $user->teacherInformation()->update(['phone_number' => $data['phone_number']]);
-        }
-        if(isset($data['address']))
-        {
-            $user->teacherInformation()->update(['address' => $data['address']]);
-        }
-        if(isset($data['experience']))
-        {
-            $user->teacherInformation()->update(['experience' => $data['experience']]);
-        }
-
-        //certificate info
-        $certificates = isset($data['certificates']) ? $data['certificates'] : [];
-        foreach($certificates as $certificate){
-            $image = $request->file('certificate-' . $certificate['id']);
-            $filePath = $image ? $this->uploadCertificate($image) : null;
-
-            $user->teacherCertificates()->update($certificate['id'], [
-                'image' =>  $filePath,
-                'date_of_issue' => $certificate['date_of_issue']
-            ]);
-        }
-
+        $user = Auth::user();
+        $data = $request->except('_method');  
         $user->load('teacherInformation');
-       
+
+        foreach ($data as $key => $value) {
+            $user->teacherInformation->$key = $value; 
+        } 
+
+        return response()
+            ->json($user);
+    }
+
+    public function updateCertificates($request)
+    {
+        $user = Auth::user();
+        $data = $request->except('_method');  
+        $certificates = $data['certificates'];
+        foreach ($certificates as $certificate) {
+            //if update or delete, we still need detach first
+            $user->teacherCertificates()->detach($certificate['id']);
+
+            //update
+            if ( !isset($certificate['remove']) || !$certificate['remove']) {
+                $image = $request->file('certificate-' . $certificate['id']);
+                $filePath = $image ? $this->uploadCertificate($image) : null;
+
+                $user->teacherCertificates()->attach($certificate['id'], [
+                    'image' =>  $filePath,
+                    'date_of_issue' => $certificate['date_of_issue']
+                ]);
+            }
+        }
+        $user->load('teacherCertificates');
+
         return response()
             ->json($user);
     }

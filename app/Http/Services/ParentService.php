@@ -3,8 +3,9 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Request;
-use App\Entities\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\Entities\User;
 use App\Helpers\Statics\UserRolesStatic;
 use App\Helpers\Statics\UserStatusStatic;
 use App\Helpers\Traits\UploadImageTrait;
@@ -81,7 +82,7 @@ class ParentService {
 
     public function info()
     {
-        $user = \Auth::user();
+        $user = auth()->user();
         $user->load([
             'parentInformation',
         ]);
@@ -114,7 +115,7 @@ class ParentService {
 
     public function update($request)
     {
-        $userAuth = \Auth::user();
+        $userAuth = auth()->user();
         $data = $request->all();    
         $user = User::find($userAuth->id);
 

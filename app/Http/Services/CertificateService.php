@@ -11,7 +11,7 @@ class CertificateService {
 
     public function create($request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
         $data = $request->all();
         // $data['created_by'] = $user->id; 
         $data['created_by'] = 1; 

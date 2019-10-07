@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\AttachCertificatesRequest;
 use App\Http\Requests\AttachGradeSubjectsRequest;
 use App\Http\Requests\RegisterTeacherRequest;
-use App\Http\Requests\UpdateTeacherRequest;
+use App\Http\Requests\UpdateTeacherInfomationRequest;
+use App\Http\Requests\UpdateTeacherCertificatesRequest;
 use App\Http\Services\TeacherService;
 
 class TeacherController extends Controller
@@ -49,9 +50,14 @@ class TeacherController extends Controller
         return $this->service->info();
     }
 
-    public function update(UpdateTeacherRequest $request)
+    public function updateInfomation(UpdateTeacherInfomationRequest $request)
     {
-        return $this->service->update($request);
+        return $this->service->updateInfomation($request);
+    }
+
+    public function updateCertificates(UpdateTeacherCertificatesRequest $request)
+    {
+        return $this->service->updateCertificates($request);
     }
 
 }

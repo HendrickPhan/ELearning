@@ -2,43 +2,34 @@
 
 namespace App\Http\Services;
 
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Entities\User;
 use Illuminate\Support\Facades\Hash;
+use App\Helpers\Traits\UploadImageTrait;
 
 class UserService {
+    use UploadImageTrait;
 
     public function update($request)
     {
-        $userAuth = \Auth::user();
-        $data = $request->all();    
-        $user = User::find($userAuth->id);
+        $user = Auth::user();
+        
+        $data = $request->except('_method');  
 
         $avatar = $request->file('avatar');
-
-        //basic user info
-        if(isset($data['name']))
-        {
-            $user['name'] = $data['name'];
+        if (isset($avatar)) {
+            $filePath = $this->uploadAvatar($avatar);
+            $data['avatar'] = $filePath;
         }
+
         if(isset($data['password']))
         {
-            $user['password'] = Hash::make($data['password']);
+            $data['password'] = Hash::make($data['password']);
         }
-        if(isset($data['date_of_birth']))
-        {
-            $user['date_of_birth'] = $data['date_of_birth'];
+
+        foreach ($data as $key => $value) {
+            $user->$key = $value;
         }
-        if(isset($data['description']))
-        {
-            $user['description'] = $data['description'];
-        }
-        if(isset($avatar))
-        {
-            $filePath = $this->uploadAvatar($avatar);
-            $user['avatar'] = $filePath;
-        }
+        
         $user->save();
        
         return response()
