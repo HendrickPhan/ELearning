@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateStudentRequest extends FormRequest
+class UpdateStudentInformationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +25,6 @@ class UpdateStudentRequest extends FormRequest
     {
         return [
             //
-            'avatar' => 'image',
-            'date_of_birth' => 'date',
         ];
     }
 }

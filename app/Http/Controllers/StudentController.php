@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterStudentRequest;
-use App\Http\Requests\UpdateStudentRequest;
+use App\Http\Requests\UpdateStudentInformationRequest;
 use App\Http\Services\StudentService;
 
 class StudentController extends Controller
@@ -51,9 +51,9 @@ class StudentController extends Controller
         return $this->service->subscribedParentList($request);
     }
 
-    public function update(UpdateStudentRequest $request)
+    public function updateInformation(UpdateStudentInformationRequest $request)
     {
-        return $this->service->update($request);
+        return $this->service->updateInformation($request);
     }
 
 }

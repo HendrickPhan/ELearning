@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterParentRequest;
-use App\Http\Requests\UpdateParentRequest;
+use App\Http\Requests\UpdateParentInformationRequest;
 use App\Http\Services\ParentService;
 
 class ParentController extends Controller
@@ -35,7 +35,7 @@ class ParentController extends Controller
         return $this->service->detail($id);
     }
 
-    public function update(UpdateParentRequest $request)
+    public function updateInformation(UpdateParentInformationRequest $request)
     {
         return $this->service->update($request);
     }

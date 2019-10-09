@@ -71,7 +71,6 @@ Route::group([
     Route::post('/register', 'TeacherController@register');
     Route::post('/attach-certificates', 'TeacherController@attachCertificates');
     Route::post('/attach-grade-subjects', 'TeacherController@attachGradeSubjects');
-    Route::put('/update','TeacherController@update');
 });
 
 Route::group([
@@ -79,7 +78,7 @@ Route::group([
     'middleware' => 'auth.role:1' //teacher
 ], function ($router) {
     Route::get('/info', 'TeacherController@info');
-    Route::put('/infomation', 'TeacherController@updateInfomation');
+    Route::put('/information', 'TeacherController@updateInformation');
     Route::put('/certificates', 'TeacherController@updateCertificates');
 });
 
@@ -98,7 +97,6 @@ Route::group([
     Route::post('/register', 'StudentController@register');
     Route::get('/', 'StudentController@index');
     Route::get('/{id}', 'StudentController@detail')->where(['id' => '[0-9]+']);
-    Route::put('/update','StudentController@update');
 
     Route::post('/{id}/subscribe', 'StudentController@subscribeStudent');
     Route::get('/subscribe', 'StudentController@subscribedParentList');
@@ -111,17 +109,7 @@ Route::group([
     'middleware' => 'auth.role:2' //student
 ], function ($router) {
     Route::get('/info', 'StudentController@info');
-});
-
-/** Parent */
-Route::group([
-    'prefix' => 'parent'
-],  function ($router) {
-    Route::get('/', 'ParentController@index');
-    Route::post('/register', 'ParentController@register');
-    Route::get('/info', 'ParentController@info');
-    Route::get('/{id}', 'ParentController@detail')->where(['id' => '[0-9]+']);
-    Route::put('/update','ParentController@update');
+    Route::put('/information', 'StudentController@updateInformation');
 });
 
 /** Parent-Student subscribe*/
@@ -130,6 +118,23 @@ Route::group([
     'middleware' => 'auth.role:3' //parent
 ], function ($router) {
     Route::post('{id}/subscribe', 'SubscribeStudentController@subscribeStudent');
+});
+
+/** Parent */
+Route::group([
+    'prefix' => 'parent'
+],  function ($router) {
+    Route::get('/', 'ParentController@index');
+    Route::post('/register', 'ParentController@register');
+    Route::get('/{id}', 'ParentController@detail')->where(['id' => '[0-9]+']);
+});
+
+Route::group([
+    'prefix' => 'student',
+    'middleware' => 'auth.role:3' //parent
+], function ($router) {
+    Route::get('/info', 'ParentController@info');
+    Route::put('/information', 'ParentController@updateInformation');
 });
 
 
