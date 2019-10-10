@@ -9,37 +9,25 @@ class LessonService {
 
     public function index($request)
     {
-        $limit = $request->get('limit', 10);
-        $status = $request->get('status', null);
-
-        $subjectsQuery = Subject::query();
-
-        if ($status) {
-            $subjectsQuery = $subjectsQuery->where('status', $status);
-        }
-
-        $subjectsResult = $subjectsQuery->paginate($limit);
-
-        return response()
-            ->json($subjectsResult); 
+        // 
     }
 
     public function detail($id)
     {
-        $subject = Subject::find($id);
-
+        $lesson = find($id);
         return response()
-            ->json($subject);
+            ->json($lesson);
     }
 
     public function create($request)
     {
         $data = $request->all();
-        $data['status'] = GeneralStatusStatic::UNPUBLISHED;
-        $subject = Subject::create($data);
+        $user = auth()->user();
+        $lesson = $user->lessons()
+            ->create($data);
 
         return response()
-            ->json($subject);
+            ->json($lesson);
     }
 
     public function update($request)

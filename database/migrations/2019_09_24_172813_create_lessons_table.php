@@ -15,13 +15,14 @@ class CreateLessonsTable extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedInteger('created_by');
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('video');
             $table->unsignedInteger('quiz_id');
             $table->unsignedInteger('essay_id');
-            $table->timestamp('start_at');
-            $table->timestamp('end_at');
+            $table->timestamp('start_at')->nullable();
+            $table->timestamp('end_at')->nullable();
             $table->timestamps();
         });
     }

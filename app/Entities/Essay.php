@@ -20,6 +20,6 @@ class Essay extends Model
 
     public function essayQuestions()
     {
-        return $this->hasMany(Essay::class, 'essay_id');
+        return $this->hasMany(EssayQuestion::class, 'essay_id');
     }
 }

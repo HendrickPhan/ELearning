@@ -81,6 +81,29 @@ Route::group([
     Route::post('{id}/subscribe', 'TeacherController@subscribeTeacher');
 });
 
+/** Teacher-Lesson*/
+Route::group([
+    'prefix' => 'lesson',
+    'middleware' => 'auth.role:1' //teacher
+], function ($router) {
+    Route::post('/', 'LessonController@create');
+});
+/** Teacher-Quiz */
+Route::group([
+    'prefix' => 'quiz',
+    'middleware' => 'auth.role:1' //teacher
+], function ($router) {
+    Route::post('/', 'QuizController@create');
+});
+/** Teacher-Essay */
+Route::group([
+    'prefix' => 'essay',
+    'middleware' => 'auth.role:1' //teacher
+], function ($router) {
+    Route::post('/', 'EssayController@create');
+});
+
+
 /** Student */
 Route::group([
     'prefix' => 'student'
@@ -148,3 +171,12 @@ Route::group([
 
 
 /** Lesson */
+Route::group([
+    'prefix' => 'lesson',
+], function ($router) {
+    Route::get('/{id}', 'LessonController@detail')->where(['id' => '[0-9]+']);
+    Route::get('/', 'LessonController@index');
+});
+
+/** Quiz */
+

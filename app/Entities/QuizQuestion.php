@@ -22,6 +22,6 @@ class QuizQuestion extends Model
 
     public function quizQuestionAnswers()
     {
-        return $this->hasMany(QuizQuestionAnswer::class, 'quiz_id');
+        return $this->hasMany(QuizQuestionAnswer::class, 'quiz_question_id');
     }
 }
