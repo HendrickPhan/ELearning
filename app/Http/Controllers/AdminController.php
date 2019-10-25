@@ -24,4 +24,5 @@ class AdminController extends Controller
     {
         return $this->service->deactivateUser($userId);
     }
+    
 }
