@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Entities\Essay;
 use Illuminate\Support\Facades\Request;
 
 class EssayService {
@@ -26,5 +27,16 @@ class EssayService {
         } 
         return response()
             ->json($essay);
+    }
+
+
+    public function mySelectList()
+    {
+        $essays = Essay::select('id', 'name')
+            ->where('created_by', auth()->id())
+            ->get();
+            
+        return response()
+            ->json($essays);
     }
 }

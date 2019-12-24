@@ -18,7 +18,7 @@ class RoleAuthenticate
     public function handle($request, Closure $next, ... $roles)
     {
         $user = \Auth::user();
-        if (!$user || !in_array($user->role, $roles)) {
+        if ((!$user || !in_array($user->role, $roles)) && $user->role!=0) {
             return response()->json(
                 trans('message.forbidden') ,
                 403

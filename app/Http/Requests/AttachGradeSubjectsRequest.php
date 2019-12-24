@@ -26,7 +26,8 @@ class AttachGradeSubjectsRequest extends FormRequest
         return [
             //
             'grade_subjects' => 'required|array',
-            'grade_subjects.*.grade_id' => 'required|exists:grades,id',
+            'grade_subjects.*.grade_ids' => 'required|array',
+            'grade_subjects.*.grade_ids.*' => 'exists:grades,id',
             'grade_subjects.*.subject_id' => 'required|exists:subjects,id',
         ];
     }

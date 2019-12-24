@@ -17,6 +17,8 @@ class CreateGradesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name', 127);
             $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('recommend_from_age')->default(0);
+            $table->tinyInteger('recommend_to_age')->default(0);
             $table->timestamps();
         });
     }

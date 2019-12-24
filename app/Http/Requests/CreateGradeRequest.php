@@ -25,7 +25,9 @@ class CreateGradeRequest extends FormRequest
     {
         return [
             //
-            'name' => 'required|unique:grades,name'
+            'name' => 'required|unique:grades,name',
+            'recommend_from_age' => 'required|integer',
+            'recommend_to_age' => 'required|integer'
         ];
     }
 }

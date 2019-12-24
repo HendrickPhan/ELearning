@@ -20,7 +20,8 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email', 
-        'password', 
+        'password',
+        'gender', 
         'role',
         'avatar',
         'date_of_birth',
@@ -120,5 +121,10 @@ class User extends Authenticatable implements JWTSubject
     public function essays()
     {
         return $this->hasMany(Essay::class, 'created_by');
+    }
+
+    public function enrolledCourse()
+    {
+        return $this->belongsToMany(Course::class, 'course_enrolls', 'student_id', 'course_id');
     }
 }

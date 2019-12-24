@@ -17,6 +17,7 @@ class AuthService {
         }
 
         return response()->json([
+            'user' => auth()->user(),
             'token' => $token,
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);

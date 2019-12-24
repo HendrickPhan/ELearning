@@ -87,6 +87,8 @@ Route::group([
     'middleware' => 'auth.role:1' //teacher
 ], function ($router) {
     Route::post('/', 'LessonController@create');
+    Route::get('/my-select-list', 'LessonController@mySelectList');
+    
 });
 /** Teacher-Quiz */
 Route::group([
@@ -94,6 +96,8 @@ Route::group([
     'middleware' => 'auth.role:1' //teacher
 ], function ($router) {
     Route::post('/', 'QuizController@create');
+    Route::get('/my-select-list', 'QuizController@mySelectList');
+    
 });
 /** Teacher-Essay */
 Route::group([
@@ -101,6 +105,7 @@ Route::group([
     'middleware' => 'auth.role:1' //teacher
 ], function ($router) {
     Route::post('/', 'EssayController@create');
+    Route::get('/my-select-list', 'EssayController@mySelectList');
 });
 
 
@@ -141,6 +146,7 @@ Route::group([
     'prefix' => 'certificate',
 ], function ($router) {
     Route::post('/', 'CertificateController@create');
+    Route::get('/', 'CertificateController@index');
 });
 
 /** Grade */
@@ -180,3 +186,27 @@ Route::group([
 
 /** Quiz */
 
+Route::group([
+    'prefix' => 'course',
+], function ($router) {
+    Route::get('/{id}', 'CourseController@detail')->where(['id' => '[0-9]+']);
+});
+
+//---------------------student
+
+Route::group([
+    'prefix' => 'course',
+    'middleware' => 'auth.role:2' //student
+], function ($router) {
+    Route::get('/recommend', 'CourseController@recommend');
+    Route::get('/student-my-courses', 'CourseController@studentMyCourses');
+
+    Route::get('/student-index', 'CourseController@studentIndex');
+    
+    Route::post('/{id}/enroll', 'CourseController@enroll');
+    Route::get('/{course_id}/{lesson_id}/learn', 'LessonController@learnLesson');
+    Route::get('/{course_id}/{lesson_id}/quiz', 'QuizController@doQuiz');
+    Route::post('/{course_id}/{lesson_id}/quiz', 'QuizAttemptController@attempt');
+   
+    Route::post('/{course_id}/comment', 'CourseController@addComment');
+});

@@ -33,6 +33,7 @@ class RegisterTeacherRequest extends FormRequest
             'date_of_birth' => 'required|date',
             'phone_number' => 'required',
             'address' => 'required',
+            'gender' => 'required|in:0,1',
             'certificates' => 'array',
             'certificates.*.id' =>'exists:certificates,id',
             'certificates.*.date_of_issue' =>'date',

@@ -15,6 +15,10 @@ class QuizQuestionAnswer extends Model
         'is_right',
     ];
 
+    protected $hidden = [
+        'is_right'
+    ];
+
     public function quizQuestion()
     {
         return $this->belongsTo(QuizQuestion::class, 'quiz_id');

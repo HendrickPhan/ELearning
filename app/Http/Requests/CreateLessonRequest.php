@@ -29,7 +29,7 @@ class CreateLessonRequest extends FormRequest
         $userId = auth()->id();   
 
         return [
-            'title' => 'required|string',
+            'name' => 'required|string',
             'description' => 'required|string',
             'video' => 'required|string',
             'quiz_id' => [
@@ -40,8 +40,6 @@ class CreateLessonRequest extends FormRequest
                 }),            
             ],
             'essay_id' => 'required|exists:essays,id',
-            'start_at' => 'required|date|after:today',
-            'end_at' => 'required|date|after:start_at',
         ];
     }
 }

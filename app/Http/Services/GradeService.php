@@ -11,6 +11,14 @@ class GradeService {
 
     public function index($request)
     {
+       $grades = Grade::all();
+
+        return response()
+            ->json($grades);  
+    }
+
+    public function pagination($request) 
+    {
         $limit = $request->get('limit', 10);
         $status = $request->get('status', null);
 

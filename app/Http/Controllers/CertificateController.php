@@ -16,6 +16,11 @@ class CertificateController extends Controller
         $this->service = $certificateService;
     }
 
+    public function index()
+    {
+        return $this->service->index();
+    }
+
     public function create(CreateCerficateRequest $request)
     {
         return $this->service->create($request);

@@ -32,7 +32,7 @@ class CreateQuizRequest extends FormRequest
             'questions.*.point' => 'required|between:0,100',
             'questions.*.answers' => 'required|array',
             'questions.*.answers.*.answer' => 'required|string',
-            'questions.*.answers.*.is_right' => 'in:0,1',
+            'questions.*.answers.*.is_right' => 'required',
         ];
     }
 }

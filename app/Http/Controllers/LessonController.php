@@ -25,4 +25,14 @@ class LessonController extends Controller
     {
         return $this->service->detail($id);
     } 
+
+    public function mySelectList()
+    {
+        return $this->service->mySelectList();
+    } 
+
+    public function learnLesson(Request $request)
+    {
+        return $this->service->learnLesson($request);
+    }
 }

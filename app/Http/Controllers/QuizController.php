@@ -20,4 +20,15 @@ class QuizController extends Controller
     {
         return $this->service->create($request); 
     }
+
+    public function mySelectList()
+    {
+        return $this->service->mySelectList(); 
+    }
+
+    public function doQuiz(Request $request)
+    {
+        return $this->service->doQuiz($request); 
+    }
+
 }

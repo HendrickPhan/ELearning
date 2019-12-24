@@ -20,4 +20,35 @@ class CourseController extends Controller
     {
         return $this->service->create($request);
     }
+
+    public function recommend(Request $request)
+    {
+        return $this->service->recommend($request);
+    }
+
+
+    public function studentMyCourses(Request $request)
+    {
+        return $this->service->studentMyCourses($request);
+    }
+
+    public function detail($id)
+    {
+        return $this->service->detail($id);
+    }
+
+    public function enroll($id)
+    {
+        return $this->service->enroll($id);
+    }
+
+    public function studentIndex(Request $request)
+    {
+        return $this->service->studentIndex($request);
+    }
+
+    public function addComment(Request $request) 
+    {
+        return $this->service->addComment($request); 
+    }
 }

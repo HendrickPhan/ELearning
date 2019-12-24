@@ -12,6 +12,8 @@ class Grade extends Model
     protected $fillable = [
         'id',
         'name',
+        'recommend_from_age',
+        'recommend_to_age',
         'status',
     ];
 }

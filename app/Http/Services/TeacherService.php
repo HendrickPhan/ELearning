@@ -57,6 +57,7 @@ class TeacherService {
             'role' => UserRolesStatic::TEACHER,
             'description' => $data['description'],
             'avatar' => $filePath,
+            'gender' => $data['gender'],
             'status' => UserStatusStatic::INACTIVE
         ];
         $user = User::create($userData);
@@ -112,7 +113,13 @@ class TeacherService {
 
         $gradeSubjects = isset($data['grade_subjects']) ? $data['grade_subjects'] : [];
         foreach ($gradeSubjects as $gradeSubject) {
-            $user->teacherGradeSubject()->create($gradeSubject);
+            foreach($gradeSubject['grade_ids'] as $gradeId) {
+                $user->teacherGradeSubject()->create(
+                    [
+                        'subject_id' => $gradeSubject['subject_id'],
+                        'grade_id' => $gradeId,
+                    ]);
+            }
         }
 
         $user->load('teacherGradeSubject');

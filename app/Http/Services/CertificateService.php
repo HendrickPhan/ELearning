@@ -9,6 +9,13 @@ use App\Helpers\Statics\CertificateStatusStatic;
 
 class CertificateService {
 
+    public function index()
+    {
+        $certificates = Certificate::all();
+        return response() 
+            ->json($certificates); 
+    }
+
     public function create($request)
     {
         $user = Auth::user();

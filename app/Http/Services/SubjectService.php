@@ -8,7 +8,16 @@ use App\Entities\Subject;
 
 class SubjectService {
 
-    public function index($request)
+    public function index()
+    {
+        $subjects = Subject::all();
+
+        return response()
+            ->json($subjects); 
+
+    }
+
+    public function paginate($request)
     {
         $limit = $request->get('limit', 10);
         $status = $request->get('status', null);
@@ -23,6 +32,7 @@ class SubjectService {
 
         return response()
             ->json($subjectsResult); 
+
     }
 
     public function detail($id)

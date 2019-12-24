@@ -20,4 +20,9 @@ class EssayController extends Controller
     {
         return $this->service->create($request); 
     }
+
+    public function mySelectList()
+    {
+        return $this->service->mySelectList(); 
+    }
 }

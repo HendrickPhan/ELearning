@@ -10,12 +10,20 @@ class Lesson extends Model
     protected $table = 'lessons';
 
     protected $fillable = [
-        'title',
+        'name',
         'description',
         'video',
         'quiz_id',
         'essay_id',
-        'start_at',
-        'end_at'
     ];
+
+    public function quiz()
+    {
+        return $this->belongsTo(Quiz::class, 'quiz_id');
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
 }
